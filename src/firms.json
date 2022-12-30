@@ -154,5 +154,31 @@
 		"isSuperDiaryFirm": false,
 		"autoTimeEnabled": false,
 		"superDiaryConversionCompleted": false
+	},
+	{
+		"firmId": "7h65a958-e3f3-42d0-86fa-04fd6754dcac",
+		"firmName": "My Real Firm",
+		"phone": null,
+		"fax": null,
+		"email": null,
+		"isTestFirm": false,
+		"status": 1,
+		"statusDescription": "Enabled",
+		"deleteCode": 0,
+		"levelUnitShop": "",
+		"streetNumber": "207",
+		"streetName": "Kent",
+		"streetType": null,
+		"postcode": "2000",
+		"state": "VIC",
+		"suburb": "Sydney",
+		"numberOfUsers": 15,
+		"lastConversionImportDate": null,
+		"isSoftDeleted": false,
+		"isHardDeleted": false,
+		"byLawyersEnabled": false,
+		"isSuperDiaryFirm": false,
+		"autoTimeEnabled": false,
+		"superDiaryConversionCompleted": false
 	}
 ]
