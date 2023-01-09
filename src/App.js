@@ -1,6 +1,7 @@
 import React from "react";
-import firmsData from "./firms.json";
+// import firmsData from "./firms.json";
 import "./App.css";
+import axios from 'axios';
 
 import {
   useTable,
@@ -9,8 +10,45 @@ import {
 } from "react-table";
 import {matchSorter} from 'match-sorter';
 
-function App() {
-  const data = [...firmsData];
+class App extends React.Component {
+  async getData() {
+    const res = await axios.get('firms.json');
+    return await res.data;
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = { data: null }
+  }
+
+  componentDidMount() {
+    if (!this.state.data) {
+      (async () => {
+        try {
+          this.setState({ data: await this.getData() });
+        } catch (error){
+          console.log(error);
+        }
+      })();
+    }
+  }
+
+  render() {
+    if (!this.state.data) {
+      return (<div><h1>FIRMS</h1>loading...</div>)
+    }
+    console.log(this.state.data);
+    return (
+      <div className="App">
+        <h1>FIRMS</h1>
+        <FirmTable data={this.state.data} />
+      </div>
+    );
+  }
+}
+
+function FirmTable({data}) {
+  const memoData = React.useMemo(() => data, []);
   const columns = React.useMemo(
     () => [
       {
@@ -45,16 +83,14 @@ function App() {
     ], 
     []
   );
-  
+  console.log(data);
   return (
-    <div className="App">
-      <h1>FIRMS</h1>
-      <FirmTable columns={columns} data={data} />
-    </div>
+    <FilteredFirmTable columns={columns} data={memoData} />
   );
 }
 
 // Define a default UI for filtering
+// From https://react-table-v7.tanstack.com/docs/examples/filtering
 function DefaultColumnFilter({
   column: { filterValue, preFilteredRows, setFilter },
 }) {
@@ -73,6 +109,7 @@ function DefaultColumnFilter({
 
 // This is a custom filter UI for selecting
 // a unique option from a list
+// From https://react-table-v7.tanstack.com/docs/examples/filtering
 function SelectColumnFilter({
   column: { filterValue, setFilter, preFilteredRows, id }
 }) {
@@ -107,6 +144,7 @@ function SelectColumnFilter({
 // This is a custom UI for a 'between' or number range
 // filter. It uses two number boxes and filters rows to
 // ones that have values between the two
+// From https://react-table-v7.tanstack.com/docs/examples/filtering
 function NumberRangeColumnFilter({
   column: { filterValue = [], preFilteredRows, setFilter, id }
 }) {
@@ -171,8 +209,7 @@ function fuzzyTextFilterFn(rows, id, filterValue) {
 // Let the table remove the filter if the string is empty
 fuzzyTextFilterFn.autoRemove = val => !val
 
-
-function FirmTable({columns, data}) {
+function FilteredFirmTable({columns, data}) {
   const filterTypes = React.useMemo(
     () => ({
       fuzzyText: fuzzyTextFilterFn
@@ -208,6 +245,9 @@ function FirmTable({columns, data}) {
     useGlobalFilter 
   )
 
+  // temp: limit rendered rows
+  const firstPageRows = rows.slice(0, 10);
+
   return (
     <div>
     <table {...getTableProps()}>
@@ -225,7 +265,8 @@ function FirmTable({columns, data}) {
         ))}
       </thead>
       <tbody {...getTableBodyProps()}>
-        {rows.map((row, i) => {
+        {/* temp: change to "rows" to render all */}
+        {firstPageRows.map((row, i) => {
           prepareRow(row)
           return (
             <tr {...row.getRowProps()}>
