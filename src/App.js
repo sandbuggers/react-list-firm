@@ -6,7 +6,8 @@ import axios from 'axios';
 import {
   useTable,
   useFilters,
-  useGlobalFilter
+  useGlobalFilter,
+  usePagination
 } from "react-table";
 import {matchSorter} from 'match-sorter';
 
@@ -37,7 +38,6 @@ class App extends React.Component {
     if (!this.state.data) {
       return (<div><h1>FIRMS</h1>loading...</div>)
     }
-    console.log(this.state.data);
     return (
       <div className="App">
         <h1>FIRMS</h1>
@@ -83,7 +83,6 @@ function FirmTable({data}) {
     ], 
     []
   );
-  console.log(data);
   return (
     <FilteredFirmTable columns={columns} data={memoData} />
   );
@@ -228,25 +227,29 @@ function FilteredFirmTable({columns, data}) {
     getTableProps,
     getTableBodyProps,
     headerGroups,
-    rows,
     prepareRow,
-    state,
-    visibleColumns,
-    preGlobalFilteredRows,
-    setGlobalFilter,
+    page,
+    canPreviousPage,
+    canNextPage,
+    pageOptions,
+    pageCount,
+    gotoPage,
+    nextPage,
+    previousPage,
+    setPageSize,
+    state: { filters, pageIndex, pageSize },
   } = useTable(
     {
       columns,
       data,
       defaultColumn, 
       filterTypes,
+      initialState: { pageIndex:0 }
     },
     useFilters,
-    useGlobalFilter 
+    useGlobalFilter,
+    usePagination
   )
-
-  // temp: limit rendered rows
-  const firstPageRows = rows.slice(0, 10);
 
   return (
     <div>
@@ -266,7 +269,7 @@ function FilteredFirmTable({columns, data}) {
       </thead>
       <tbody {...getTableBodyProps()}>
         {/* temp: change to "rows" to render all */}
-        {firstPageRows.map((row, i) => {
+        {page.map((row, i) => {
           prepareRow(row)
           return (
             <tr {...row.getRowProps()}>
@@ -278,12 +281,50 @@ function FilteredFirmTable({columns, data}) {
         })}
       </tbody>
     </table>
-    <br/>
-    {/* show filters for debugging */}
-    <div>
-        <pre>
-          <code>{JSON.stringify(state.filters, null, 2)}</code>
-        </pre>
+    {/* pagination controls */}
+    <div className="pagination">
+        <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+          {'<<'}
+        </button>{' '}
+        <button onClick={() => previousPage()} disabled={!canPreviousPage}>
+          {'<'}
+        </button>{' '}
+        <button onClick={() => nextPage()} disabled={!canNextPage}>
+          {'>'}
+        </button>{' '}
+        <button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
+          {'>>'}
+        </button>{' '}
+        <span>
+          Page{' '}
+          <strong>
+            {pageIndex + 1} of {pageOptions.length}
+          </strong>{' '}
+        </span>
+        <span>
+          | Go to page:{' '}
+          <input
+            type="number"
+            defaultValue={pageIndex + 1}
+            onChange={e => {
+              const page = e.target.value ? Number(e.target.value) - 1 : 0
+              gotoPage(page)
+            }}
+            style={{ width: '100px' }}
+          />
+        </span>{' '}
+        <select
+          value={pageSize}
+          onChange={e => {
+            setPageSize(Number(e.target.value))
+          }}
+        >
+          {[10, 20, 30, 40, 50].map(pageSize => (
+            <option key={pageSize} value={pageSize}>
+              Show {pageSize}
+            </option>
+          ))}
+        </select>
       </div>
     </div>
   )
