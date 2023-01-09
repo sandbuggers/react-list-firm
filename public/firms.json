@@ -544,5 +544,32 @@
 		"isSuperDiaryFirm": false,
 		"autoTimeEnabled": false,
 		"superDiaryConversionCompleted": false
+	},
+	{
+		"firmId": "eb935921-98fc-4616-9c60-a85f56e8693f",
+		"firmName": "Main Ave Firm",
+		"phone": null,
+		"fax": null,
+		"email": null,
+		"isTestFirm": false,
+		"status": 1,
+		"statusDescription": "Enabled",
+		"deleteCode": 0,
+		"levelUnitShop": "",
+		"streetNumber": "207",
+		"streetName": "Kent",
+		"streetType": null,
+		"postcode": "2000",
+		"state": "QLD",
+		"suburb": "Sydney",
+		"numberOfUsers": 6,
+		"lastConversionImportDate": null,
+		"isSoftDeleted": false,
+		"isHardDeleted": false,
+		"byLawyersEnabled": false,
+		"isSuperDiaryFirm": false,
+		"autoTimeEnabled": false,
+		"superDiaryConversionCompleted": false
 	}
+]
 ]
